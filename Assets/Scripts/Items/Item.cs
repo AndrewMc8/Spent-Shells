@@ -11,7 +11,7 @@ public abstract class Item : MonoBehaviour
     [HideInInspector] public float Value { get { return value; } }
     [HideInInspector] public string Name { get { return name; } }
 
-    private void OnValidate()
+    protected virtual void OnValidate()
     {
         if (string.IsNullOrWhiteSpace(this.name) || string.IsNullOrEmpty(this.name)) this.name = gameObject.name;
     }

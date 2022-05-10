@@ -11,6 +11,11 @@ public abstract class Weapon : Item
     public abstract void Released();
     public abstract void update(float dt);
 
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+    }
+
     public override System.Type GetBaseType()
     {
         return typeof(Weapon);

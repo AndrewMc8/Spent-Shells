@@ -5,6 +5,11 @@ public class SemiAuto : Gun
 {
     private bool fired = false;
 
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+    }
+
     protected override void Shoot()
     {
         if(!fired)

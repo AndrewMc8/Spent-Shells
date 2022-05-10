@@ -12,6 +12,11 @@ public class FullAuto : Gun
 //        SimulateBullet();
     }
 
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+    }
+
     public override void Released() {}
 
 

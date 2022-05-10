@@ -14,6 +14,11 @@ public class Charge : Gun
     private float currentCharge;
     private bool charge = false;
 
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+    }
+
     public override void update(float dt)
     {
         base.update(dt);

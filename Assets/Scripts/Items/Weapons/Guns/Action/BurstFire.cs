@@ -12,8 +12,10 @@ public class BurstFire : Gun
 
     private bool firing = false;
 
-    private void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
+
         if (burstInterval < 0) burstInterval = 0;
         burstCount = Mathf.Min(burstCount, magCapacity);
     }

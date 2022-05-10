@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Gun : Weapon
@@ -20,6 +22,8 @@ public abstract class Gun : Weapon
     [SerializeField] protected float heatCooldown;
     [SerializeField] protected float heatCooldownRate;
 
+    [SerializeField] protected BulletLogic bulletLogic = null;
+
     protected float heat = 0;
     protected float heatCooldownTimer = 0.0f;
     protected float fireTimer = 0.0f;
@@ -38,14 +42,20 @@ public abstract class Gun : Weapon
     [SerializeField] protected Transform gunPort;
     [SerializeField] protected GameObject gunBase;
 
-    private void OnValidate()
+    public void Validate()
     {
+        OnValidate();
+    }
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+
         if (fireInterval < 0) fireInterval = 0;
 
         if (magCapacity < 1) magCapacity = 1;
         if (roundsRemaining < 0) roundsRemaining = 0;
 
-        if (recoilPattern.Length > 1 && recoilPattern[0] != Vector2.zero) recoilPattern[0] = Vector2.zero;
         if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
         chambered = (roundsRemaining > magCapacity);
 
@@ -55,6 +65,37 @@ public abstract class Gun : Weapon
             {
                 recoilPattern[i].x = Mathf.Abs(recoilPattern[i].x);
                 recoilPattern[i].y = Mathf.Abs(recoilPattern[i].y);
+            }
+        }
+
+        if(bulletLogic == null)
+        {
+            if(gameObject.TryGetComponent<BulletLogic>(out BulletLogic foundBulletLogic))
+            {
+                bulletLogic = foundBulletLogic;
+            }
+            else
+            {
+                bulletLogic = gameObject.AddComponent<SingleShot>();
+            }
+        }
+        else
+        {
+            List<BulletLogic> bulletLogics = gameObject.transform.GetComponents<BulletLogic>().ToList();
+
+            print("Count: " + bulletLogics.Count);
+
+            switch (bulletLogics.Count)
+            {
+                case 0:
+                    gameObject.AddComponent<SingleShot>();
+                    break;
+                case 1:
+                    bulletLogic = bulletLogics[0];
+                    break;
+                default:
+                    bulletLogic = bulletLogics[bulletLogics.Count - 1];
+                    break;
             }
         }
     }
