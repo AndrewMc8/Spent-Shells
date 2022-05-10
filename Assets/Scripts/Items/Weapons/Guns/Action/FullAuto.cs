@@ -9,7 +9,7 @@ public class FullAuto : Gun
         heatCooldownTimer = heatCooldown;
         roundsRemaining--;
 
-//        SimulateBullet();
+        SimulateBullet();
     }
 
     protected override void OnValidate()

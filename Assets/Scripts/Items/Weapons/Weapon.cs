@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Weapon : Item
 {
     [Header("Weapon Base")]
+    [Tooltip("Damage is for Each Projectile")]
     [SerializeField] protected List<Damage> damages = new List<Damage>();
 
     public abstract void Pressed();
@@ -21,7 +22,7 @@ public abstract class Weapon : Item
         return typeof(Weapon);
     }
 
-    public virtual void Damage(Collider collider)
+    public void Damage(Collider collider)
     {
         if(LayerMask.LayerToName(collider.gameObject.layer).Equals("WeakPoint"))
         {
@@ -34,6 +35,14 @@ public abstract class Weapon : Item
         if (collider.gameObject.transform.root.TryGetComponent<Health>(out Health health))
         {
             damages.ForEach(x => health.Damage(new Damage(x), collider.tag.Contains("colliderMulti: ") ? float.Parse(collider.tag.Substring("colliderMulti: ".Length - 1)) : 1));
+        }
+    }
+
+    public void Damage(GameObject hitObject)
+    {
+        if (hitObject.transform.root.TryGetComponent<Health>(out Health health))
+        {
+            damages.ForEach(x => health.Damage(new Damage(x), hitObject.tag.Contains("colliderMulti: ") ? float.Parse(hitObject.tag.Substring("colliderMulti: ".Length - 1)) : 1));
         }
     }
 

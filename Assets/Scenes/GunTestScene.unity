@@ -228,7 +228,6 @@ GameObject:
   - component: {fileID: 655690201}
   - component: {fileID: 655690200}
   - component: {fileID: 655690199}
-  - component: {fileID: 655690198}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -236,40 +235,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &655690198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655690197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6ba4ab33d8ecf043b46788a016f4d4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weight: 0
-  value: 0
-  name: 
-  damages: []
-  fireInterval: 0
-  maxRange: 100
-  chamberable: 1
-  magCapacity: 12
-  roundsRemaining: 11
-  reloadTime: 2
-  heatMethod: 0
-  recoilPattern: []
-  heatCooldown: 0
-  heatCooldownRate: 0
-  bulletLogic: {fileID: 0}
-  firedSound: {fileID: 0}
-  missFiredSound: {fileID: 0}
-  reloadedSound: {fileID: 0}
-  gunPort: {fileID: 0}
-  gunBase: {fileID: 0}
-  burstInterval: 0.05
-  burstCount: 3
 --- !u!65 &655690199
 BoxCollider:
   m_ObjectHideFlags: 0

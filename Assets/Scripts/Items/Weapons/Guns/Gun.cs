@@ -144,14 +144,25 @@ public abstract class Gun : Weapon
 
     protected abstract void Shoot();
 
-    protected void SimulateBullet(Ray ray)
+    protected void SimulateBullet()
     {
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, maxRange))
+        Vector3 dir = gunPort.forward;
+
+        if (heatMethod == HeatMethod.DEVIATION)
         {
-            if (!raycastHit.collider.CompareTag(tag))
-            {
-                Damage(raycastHit.collider);
-            }
+            dir.x += Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
+            dir.y += Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
+        }
+        else
+        {
+            dir.x += recoilPattern[(int)heat].x;
+            dir.y += recoilPattern[(int)heat].y;
+        }
+
+        List<GameObject> hitsObjects = bulletLogic.GenerateHits(gunPort.position, dir, maxRange);
+        foreach(var go in hitsObjects)
+        {
+            Damage(go);
         }
     }
 }

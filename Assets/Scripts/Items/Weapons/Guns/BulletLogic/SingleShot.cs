@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,8 +11,20 @@ public class SingleShot : BulletLogic
         }
     }
 
-    public override List<GameObject> GenerateHits()
+    public override List<GameObject> GenerateHits(Vector3 origin, Vector3 direction, float range)
     {
-        throw new System.NotImplementedException();
+        List<GameObject> hitObjects = new List<GameObject>();
+
+        Ray ray = new Ray(origin, direction);
+
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
+        {
+            if (!raycastHit.collider.CompareTag(tag))
+            {
+                hitObjects.Add(raycastHit.collider.gameObject);
+            }
+        }
+
+        return hitObjects;
     }
 }

@@ -29,7 +29,6 @@ public class Charge : Gun
             currentCharge = Mathf.Max(Mathf.Min(currentCharge - decayRate * dt, currentCharge), minCharge);
         
         charge = false;
-        print("charging: " + (int)currentCharge);
     }
 
     public override void Pressed()
@@ -44,8 +43,8 @@ public class Charge : Gun
 
     protected override void Shoot()
     {
-        print("charged shot: " + currentCharge);
         currentCharge = (chargeLoss == 0) ? 0 : Mathf.Max(currentCharge - chargeLoss, 0);
+        SimulateBullet();
     }
 
     public override void Released() {}

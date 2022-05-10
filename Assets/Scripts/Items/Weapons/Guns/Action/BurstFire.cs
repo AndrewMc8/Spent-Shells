@@ -41,10 +41,9 @@ public class BurstFire : Gun
                 heatCooldownTimer = heatCooldown;
                 roundsRemaining--;
 
-//                SimulateBullet();
+                SimulateBullet();
 
                 if (firedSound) AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
-                print("Fired: " + burstFired);
 
                 if (burstFired >= burstCount || roundsRemaining <= 0)
                 {

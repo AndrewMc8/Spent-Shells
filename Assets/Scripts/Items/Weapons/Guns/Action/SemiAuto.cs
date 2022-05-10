@@ -20,7 +20,7 @@ public class SemiAuto : Gun
             roundsRemaining--;
 
             if (firedSound) AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
-            SimulateBullet(new Ray(gunPort.position, gunPort.forward));
+            SimulateBullet();
 
             fired = true;
         }
