@@ -43,8 +43,6 @@ public class BurstFire : Gun
 
                 SimulateBullet();
 
-                if (firedSound) AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
-
                 if (burstFired >= burstCount || roundsRemaining <= 0)
                 {
                     firing = false;

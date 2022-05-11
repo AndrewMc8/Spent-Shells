@@ -14,12 +14,10 @@ public class SemiAuto : Gun
     {
         if(!fired)
         {
-            //Put Gun Logic Here
             heat = Mathf.Min(recoilPattern.Length - 1, heat + 1);
             heatCooldownTimer = heatCooldown;
             roundsRemaining--;
 
-            if (firedSound) AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
             SimulateBullet();
 
             fired = true;

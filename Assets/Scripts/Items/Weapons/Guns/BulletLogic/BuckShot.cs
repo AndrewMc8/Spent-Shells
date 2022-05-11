@@ -1,10 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BuckShot : BulletLogic
 {
     [SerializeField] private int pelletCount = 1;
+    [Tooltip("Standard Deviation after 100 units")]
     [SerializeField] private Vector2 stdPelletDeviation = Vector2.zero;
 
     protected void OnValidate()
@@ -21,7 +21,7 @@ public class BuckShot : BulletLogic
             stdPelletDeviation = new Vector2(Mathf.Abs(stdPelletDeviation.x), Mathf.Abs(stdPelletDeviation.y));
     }
 
-    public override List<GameObject> GenerateHits(Vector3 origin, Vector3 direction, float range)
+    public override List<GameObject> GenerateHits(Transform origin, Vector3 baseDirection, float range)
     {
         List<GameObject> hitObjects = new List<GameObject>();
 
@@ -35,18 +35,20 @@ public class BuckShot : BulletLogic
             if (i == 0)
                 deviatedDirection = Vector3.zero;
 
-            deviatedDirection = direction + deviatedDirection;
+            deviatedDirection = baseDirection * 100 + origin.right * deviatedDirection.x + origin.up * deviatedDirection.y;
 
-            Ray ray = new Ray(origin, deviatedDirection);
+            Debug.DrawRay(origin.position, deviatedDirection, Color.red, 5);
+
+            Ray ray = new Ray(origin.position, deviatedDirection);
             if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
             {
-                if (!raycastHit.collider.CompareTag(tag))
+                print(raycastHit.collider.gameObject.name);
+                if (true || !raycastHit.collider.CompareTag(tag))
                 {
                     hitObjects.Add(raycastHit.collider.gameObject);
                 }
             }
         }
-
 
         return hitObjects;
     }

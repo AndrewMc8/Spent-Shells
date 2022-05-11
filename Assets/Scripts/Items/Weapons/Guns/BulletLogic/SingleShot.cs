@@ -11,15 +11,17 @@ public class SingleShot : BulletLogic
         }
     }
 
-    public override List<GameObject> GenerateHits(Vector3 origin, Vector3 direction, float range)
+    public override List<GameObject> GenerateHits(Transform origin, Vector3 baseDirection, float range)
     {
         List<GameObject> hitObjects = new List<GameObject>();
 
-        Ray ray = new Ray(origin, direction);
+        Ray ray = new Ray(origin.position, baseDirection);
+
+        Debug.DrawRay(origin.position, baseDirection, Color.red, 5);
 
         if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
         {
-            if (!raycastHit.collider.CompareTag(tag))
+            if (true || !raycastHit.collider.CompareTag(tag))
             {
                 hitObjects.Add(raycastHit.collider.gameObject);
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -56,6 +57,12 @@ public abstract class Gun : Weapon
         if (magCapacity < 1) magCapacity = 1;
         if (roundsRemaining < 0) roundsRemaining = 0;
 
+        if(recoilPattern == null || recoilPattern.Length < 1)
+        {
+            Array.Resize(ref recoilPattern, 1);
+            recoilPattern[0] = Vector3.zero;
+        }
+
         if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
         chambered = (roundsRemaining > magCapacity);
 
@@ -82,8 +89,6 @@ public abstract class Gun : Weapon
         else
         {
             List<BulletLogic> bulletLogics = gameObject.transform.GetComponents<BulletLogic>().ToList();
-
-            print("Count: " + bulletLogics.Count);
 
             switch (bulletLogics.Count)
             {
@@ -148,19 +153,30 @@ public abstract class Gun : Weapon
     {
         Vector3 dir = gunPort.forward;
 
+        float xDev;
+        float yDev;
+
         if (heatMethod == HeatMethod.DEVIATION)
         {
-            dir.x += Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
-            dir.y += Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
+            xDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
+            yDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
         }
         else
         {
-            dir.x += recoilPattern[(int)heat].x;
-            dir.y += recoilPattern[(int)heat].y;
+            xDev = recoilPattern[(int)heat].x;
+            yDev = recoilPattern[(int)heat].y;
         }
 
-        List<GameObject> hitsObjects = bulletLogic.GenerateHits(gunPort.position, dir, maxRange);
-        foreach(var go in hitsObjects)
+        dir = gunPort.forward * 100 + gunPort.right * -xDev + gunPort.up * yDev;
+
+        dir.Normalize();
+
+        if (firedSound)
+            AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
+
+        List<GameObject> hitObjects = bulletLogic.GenerateHits(gunPort, dir, maxRange);
+
+        foreach(var go in hitObjects)
         {
             Damage(go);
         }
