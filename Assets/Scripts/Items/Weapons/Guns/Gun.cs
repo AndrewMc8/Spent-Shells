@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Gun : Weapon
@@ -16,9 +19,12 @@ public abstract class Gun : Weapon
     [SerializeField] protected int roundsRemaining = 11;
     [SerializeField] protected float reloadTime = 2.0f;
     [SerializeField] protected HeatMethod heatMethod = HeatMethod.EXACT;
+    [Tooltip("Recoil Pattern is After 10 units")]
     [SerializeField] protected Vector2[] recoilPattern;
     [SerializeField] protected float heatCooldown;
     [SerializeField] protected float heatCooldownRate;
+
+    [SerializeField] protected BulletLogic bulletLogic = null;
 
     protected float heat = 0;
     protected float heatCooldownTimer = 0.0f;
@@ -38,16 +44,44 @@ public abstract class Gun : Weapon
     [SerializeField] protected Transform gunPort;
     [SerializeField] protected GameObject gunBase;
 
-    private void OnValidate()
+    public void Validate()
     {
-        if (fireInterval < 0) fireInterval = 0;
+        OnValidate();
+    }
 
-        if (magCapacity < 1) magCapacity = 1;
-        if (roundsRemaining < 0) roundsRemaining = 0;
+    protected override void OnValidate()
+    {
+        base.OnValidate();
 
-        if (recoilPattern.Length > 1 && recoilPattern[0] != Vector2.zero) recoilPattern[0] = Vector2.zero;
-        if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
-        chambered = (roundsRemaining > magCapacity);
+        if (fireInterval < 0) 
+            fireInterval = 0;
+
+        if (magCapacity < 1) 
+            magCapacity = 1;
+        
+        if (roundsRemaining < 0) 
+            roundsRemaining = 0;
+
+        if (maxRange <= 0)
+            maxRange = 1;
+
+        if (reloadTime < 0)
+            reloadTime = 0;
+
+        if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) 
+            roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
+
+        if (heatCooldown < 0)
+            heatCooldown = 0;
+
+        if (heatCooldownRate < 0)
+            heatCooldownRate = 0;
+
+        if (recoilPattern == null || recoilPattern.Length < 1)
+        {
+            Array.Resize(ref recoilPattern, 1);
+            recoilPattern[0] = Vector3.zero;
+        }
 
         if(heatMethod == HeatMethod.DEVIATION)
         {
@@ -55,6 +89,35 @@ public abstract class Gun : Weapon
             {
                 recoilPattern[i].x = Mathf.Abs(recoilPattern[i].x);
                 recoilPattern[i].y = Mathf.Abs(recoilPattern[i].y);
+            }
+        }
+
+        if(bulletLogic == null)
+        {
+            if(gameObject.TryGetComponent<BulletLogic>(out BulletLogic foundBulletLogic))
+            {
+                bulletLogic = foundBulletLogic;
+            }
+            else
+            {
+                bulletLogic = gameObject.AddComponent<SingleShot>();
+            }
+        }
+        else
+        {
+            List<BulletLogic> bulletLogics = gameObject.transform.GetComponents<BulletLogic>().ToList();
+
+            switch (bulletLogics.Count)
+            {
+                case 0:
+                    gameObject.AddComponent<SingleShot>();
+                    break;
+                case 1:
+                    bulletLogic = bulletLogics[0];
+                    break;
+                default:
+                    bulletLogic = bulletLogics[bulletLogics.Count - 1];
+                    break;
             }
         }
     }
@@ -103,14 +166,36 @@ public abstract class Gun : Weapon
 
     protected abstract void Shoot();
 
-    protected void SimulateBullet(Ray ray)
+    protected void SimulateBullet()
     {
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, maxRange))
+        Vector3 dir = gunPort.forward;
+
+        float xDev;
+        float yDev;
+
+        if (heatMethod == HeatMethod.DEVIATION)
         {
-            if (!raycastHit.collider.CompareTag(tag))
-            {
-                Damage(raycastHit.collider);
-            }
+            xDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
+            yDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
+        }
+        else
+        {
+            xDev = recoilPattern[(int)heat].x;
+            yDev = recoilPattern[(int)heat].y;
+        }
+
+        dir = gunPort.forward * 10 + gunPort.right * -xDev + gunPort.up * yDev;
+
+        dir.Normalize();
+
+        if (firedSound)
+            AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
+
+        List<GameObject> hitObjects = bulletLogic.GenerateHits(gunPort, dir, maxRange);
+
+        foreach(var go in hitObjects)
+        {
+            Damage(go);
         }
     }
 }
