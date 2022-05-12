@@ -19,6 +19,7 @@ public abstract class Gun : Weapon
     [SerializeField] protected int roundsRemaining = 11;
     [SerializeField] protected float reloadTime = 2.0f;
     [SerializeField] protected HeatMethod heatMethod = HeatMethod.EXACT;
+    [Tooltip("Recoil Pattern is After 10 units")]
     [SerializeField] protected Vector2[] recoilPattern;
     [SerializeField] protected float heatCooldown;
     [SerializeField] protected float heatCooldownRate;
@@ -52,19 +53,35 @@ public abstract class Gun : Weapon
     {
         base.OnValidate();
 
-        if (fireInterval < 0) fireInterval = 0;
+        if (fireInterval < 0) 
+            fireInterval = 0;
 
-        if (magCapacity < 1) magCapacity = 1;
-        if (roundsRemaining < 0) roundsRemaining = 0;
+        if (magCapacity < 1) 
+            magCapacity = 1;
+        
+        if (roundsRemaining < 0) 
+            roundsRemaining = 0;
 
-        if(recoilPattern == null || recoilPattern.Length < 1)
+        if (maxRange <= 0)
+            maxRange = 1;
+
+        if (reloadTime < 0)
+            reloadTime = 0;
+
+        if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) 
+            roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
+
+        if (heatCooldown < 0)
+            heatCooldown = 0;
+
+        if (heatCooldownRate < 0)
+            heatCooldownRate = 0;
+
+        if (recoilPattern == null || recoilPattern.Length < 1)
         {
             Array.Resize(ref recoilPattern, 1);
             recoilPattern[0] = Vector3.zero;
         }
-
-        if (roundsRemaining > magCapacity + ((chamberable) ? 1 : 0)) roundsRemaining = magCapacity + ((chamberable) ? 1 : 0);
-        chambered = (roundsRemaining > magCapacity);
 
         if(heatMethod == HeatMethod.DEVIATION)
         {
@@ -167,7 +184,7 @@ public abstract class Gun : Weapon
             yDev = recoilPattern[(int)heat].y;
         }
 
-        dir = gunPort.forward * 100 + gunPort.right * -xDev + gunPort.up * yDev;
+        dir = gunPort.forward * 10 + gunPort.right * -xDev + gunPort.up * yDev;
 
         dir.Normalize();
 

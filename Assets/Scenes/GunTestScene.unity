@@ -626,8 +626,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1283168733}
   - component: {fileID: 1283168734}
-  - component: {fileID: 1283168735}
   - component: {fileID: 1283168731}
+  - component: {fileID: 1283168732}
+  - component: {fileID: 1283168735}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -647,17 +648,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa4730706a2f3074db7c120ea7a089ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 0
-  value: 0
+  weight: 15.19
+  value: 66.8
   name: Gun
-  damages: []
-  fireInterval: 0.2
-  maxRange: 100
+  damages:
+  - damageType: 10
+    damage: 10
+    duration: 0
+  fireInterval: 2.5
+  maxRange: 0.35
   chamberable: 1
-  magCapacity: 12
-  roundsRemaining: 11
-  reloadTime: 2
-  heatMethod: 0
+  magCapacity: 1
+  roundsRemaining: 2
+  reloadTime: 0.07
+  heatMethod: 1
   recoilPattern:
   - {x: 0, y: 0}
   heatCooldown: 0
@@ -666,8 +670,20 @@ MonoBehaviour:
   firedSound: {fileID: 0}
   missFiredSound: {fileID: 0}
   reloadedSound: {fileID: 0}
-  gunPort: {fileID: 0}
-  gunBase: {fileID: 0}
+  gunPort: {fileID: 2029003591}
+  gunBase: {fileID: 862194172}
+--- !u!114 &1283168732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283168730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e6adfb4f320564ab0874cee2438daa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1283168733
 Transform:
   m_ObjectHideFlags: 0
@@ -792,8 +808,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e08a09820e4554479232f5d867060dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pelletCount: 200
-  stdPelletDeviation: {x: 50, y: 10}
+  pelletCount: 88
+  stdPelletDeviation: {x: 10, y: 5}
 --- !u!1 &1364433069
 GameObject:
   m_ObjectHideFlags: 0

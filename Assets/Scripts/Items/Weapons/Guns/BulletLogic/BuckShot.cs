@@ -4,7 +4,7 @@ using UnityEngine;
 public class BuckShot : BulletLogic
 {
     [SerializeField] private int pelletCount = 1;
-    [Tooltip("Standard Deviation after 100 units")]
+    [Tooltip("Standard Deviation after 10 units")]
     [SerializeField] private Vector2 stdPelletDeviation = Vector2.zero;
 
     protected void OnValidate()
@@ -35,7 +35,7 @@ public class BuckShot : BulletLogic
             if (i == 0)
                 deviatedDirection = Vector3.zero;
 
-            deviatedDirection = baseDirection * 100 + origin.right * deviatedDirection.x + origin.up * deviatedDirection.y;
+            deviatedDirection = baseDirection * 10 + origin.right * deviatedDirection.x + origin.up * deviatedDirection.y;
 
             Debug.DrawRay(origin.position, deviatedDirection, Color.red, 5);
 
