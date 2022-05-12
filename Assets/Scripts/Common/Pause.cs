@@ -22,8 +22,11 @@ public class Pause : MonoBehaviour
             pauseUI.SetActive(isPaused);
             Time.timeScale = (isPaused) ? 0 : 1;
             //Cursor.visible = !Cursor.visible;
-            if (value) AudioManager.Instance.PlaySFX(openPause);
-            else AudioManager.Instance.PlaySFX(closePause);
+            if (openPause && closePause)
+            {
+                if (value) AudioManager.Instance.PlaySFX(openPause);
+                else AudioManager.Instance.PlaySFX(closePause);
+            }
         }
     }
 
@@ -37,7 +40,7 @@ public class Pause : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             paused = !paused;
-            
+
         }
     }
 }
