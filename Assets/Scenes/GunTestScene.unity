@@ -627,7 +627,6 @@ GameObject:
   - component: {fileID: 1283168733}
   - component: {fileID: 1283168734}
   - component: {fileID: 1283168731}
-  - component: {fileID: 1283168732}
   - component: {fileID: 1283168735}
   m_Layer: 0
   m_Name: Gun
@@ -655,11 +654,12 @@ MonoBehaviour:
   - damageType: 10
     damage: 10
     duration: 0
-  fireInterval: 2.5
+  totalAmmo: 50
+  fireInterval: 2
   maxRange: 0.35
   chamberable: 1
-  magCapacity: 1
-  roundsRemaining: 2
+  magCapacity: 24
+  roundsRemaining: 25
   reloadTime: 0.07
   heatMethod: 1
   recoilPattern:
@@ -667,23 +667,11 @@ MonoBehaviour:
   heatCooldown: 0
   heatCooldownRate: 0
   bulletLogic: {fileID: 1283168735}
-  firedSound: {fileID: 0}
+  firedSound: {fileID: 1283168734}
   missFiredSound: {fileID: 0}
   reloadedSound: {fileID: 0}
   gunPort: {fileID: 2029003591}
   gunBase: {fileID: 862194172}
---- !u!114 &1283168732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283168730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32e6adfb4f320564ab0874cee2438daa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1283168733
 Transform:
   m_ObjectHideFlags: 0
@@ -712,7 +700,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3067a019c7251f74ba0e14132d223aef, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.01
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -11,6 +11,11 @@ public abstract class Gun : Weapon
         DEVIATION
     }
 
+    [SerializeField] protected int extraAmmo;
+
+    [HideInInspector]
+    public int AmmoCount { get { return extraAmmo + roundsRemaining; } }
+
     [Header("Base")]
     [SerializeField] protected float fireInterval = 0.2f;
     [SerializeField] protected float maxRange = 100;
@@ -77,6 +82,9 @@ public abstract class Gun : Weapon
         if (heatCooldownRate < 0)
             heatCooldownRate = 0;
 
+        if (extraAmmo < 0)
+            extraAmmo = 0;
+
         if (recoilPattern == null || recoilPattern.Length < 1)
         {
             Array.Resize(ref recoilPattern, 1);
@@ -137,7 +145,6 @@ public abstract class Gun : Weapon
             }
             else
             {
-                if (missFiredSound) AudioSource.PlayClipAtPoint(missFiredSound.clip, transform.position);
                 Reload();
             }
         }
@@ -159,7 +166,13 @@ public abstract class Gun : Weapon
             if(reloadTimer <= 0)
             {
                 if(reloadedSound) AudioSource.PlayClipAtPoint(reloadedSound.clip, transform.position);
-                roundsRemaining = magCapacity + ((chamberable && roundsRemaining > 0) ? 1 : 0);
+
+                //  max request
+                int requestedAmmo = magCapacity + ((chamberable && roundsRemaining > 0) ? 1 : 0) - roundsRemaining;
+                requestedAmmo = Mathf.Min(requestedAmmo, extraAmmo);
+
+                roundsRemaining += requestedAmmo;
+                extraAmmo -= requestedAmmo;
             }
         }
     }
@@ -168,34 +181,43 @@ public abstract class Gun : Weapon
 
     protected void SimulateBullet()
     {
-        Vector3 dir = gunPort.forward;
-
-        float xDev;
-        float yDev;
-
-        if (heatMethod == HeatMethod.DEVIATION)
+        if(roundsRemaining > 0)
         {
-            xDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
-            yDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
+            float xDev;
+            float yDev;
+
+            switch (heatMethod)
+            {
+                case HeatMethod.EXACT:
+                    xDev = recoilPattern[(int)heat].x;
+                    yDev = recoilPattern[(int)heat].y;
+                    break;
+                case HeatMethod.DEVIATION:
+                    xDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].x, recoilPattern[(int)heat].x);
+                    yDev = UnityEngine.Random.Range(-recoilPattern[(int)heat].y, recoilPattern[(int)heat].y);
+                    break;
+                default:
+                    throw new InvalidOperationException("How?");
+            }
+
+            Vector3 dir = (gunPort.forward * 10 + gunPort.right * -xDev + gunPort.up * yDev).normalized;
+
+            if (firedSound)
+                AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
+
+            roundsRemaining--;
+            List<GameObject> hitObjects = bulletLogic.GenerateHits(gunPort, dir, maxRange);
+
+            foreach(var go in hitObjects)
+            {
+                Damage(go);
+            }
         }
         else
         {
-            xDev = recoilPattern[(int)heat].x;
-            yDev = recoilPattern[(int)heat].y;
+            if(missFiredSound)
+                AudioSource.PlayClipAtPoint(missFiredSound.clip, transform.position);
         }
 
-        dir = gunPort.forward * 10 + gunPort.right * -xDev + gunPort.up * yDev;
-
-        dir.Normalize();
-
-        if (firedSound)
-            AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
-
-        List<GameObject> hitObjects = bulletLogic.GenerateHits(gunPort, dir, maxRange);
-
-        foreach(var go in hitObjects)
-        {
-            Damage(go);
-        }
     }
 }
