@@ -16,7 +16,6 @@ public class SemiAuto : Gun
         {
             heat = Mathf.Min(recoilPattern.Length - 1, heat + 1);
             heatCooldownTimer = heatCooldown;
-            roundsRemaining--;
 
             SimulateBullet();
 
