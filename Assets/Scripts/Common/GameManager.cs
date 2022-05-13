@@ -30,7 +30,8 @@ public class GameManager : Singleton<GameManager>
 
     public override void Awake()
     {
-        base.Awake();       
+        base.Awake();
+        state = SceneManager.GetActiveScene().name == "MainMenu" ? State.TITLE : State.GAME;
 
         SceneManager.activeSceneChanged += OnSceneWasLoaded;
     }
@@ -55,10 +56,12 @@ public class GameManager : Singleton<GameManager>
         switch (state)
         {
             case State.TITLE:
+                if (pauser.canPause) pauser.canPause = false;
                 break;
             case State.PLAYER_START:
                 break;
             case State.GAME:
+                if(!pauser.canPause) pauser.canPause = true;
                 break;
             case State.GAME_OVER:
                 break;

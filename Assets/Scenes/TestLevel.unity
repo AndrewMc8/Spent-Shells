@@ -843,6 +843,7 @@ MonoBehaviour:
   - damageType: 10
     damage: 10
     duration: 0
+  extraAmmo: 0
   fireInterval: 3.13
   maxRange: 0.35
   chamberable: 1
