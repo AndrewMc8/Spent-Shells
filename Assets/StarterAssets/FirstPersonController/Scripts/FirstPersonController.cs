@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -20,6 +21,7 @@ namespace StarterAssets
 		public float RotationSpeed = 1.0f;
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
+		public Weapon weapon;
 
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
@@ -114,10 +116,30 @@ namespace StarterAssets
 		{
 			JumpAndGravity();
 			GroundedCheck();
+			Shoot();
 			Move();
 		}
 
-		private void LateUpdate()
+        private void Shoot()
+        {
+			weapon?.update(Time.deltaTime);
+
+            if (Input.GetKeyDown(KeyCode.R) && weapon is Gun)
+            {
+				(weapon as Gun)?.Reload();
+            }
+            if (Input.GetMouseButton(0))
+            {
+				weapon?.Pressed();
+            }
+            else
+            {
+				weapon?.Released();
+            }
+
+        }
+
+        private void LateUpdate()
 		{
 			CameraRotation();
 		}
