@@ -15,9 +15,9 @@ public class SingleShot : BulletLogic
     {
         List<GameObject> hitObjects = new List<GameObject>();
 
-        Ray ray = new Ray(origin.position, baseDirection);
+        Ray ray = new Ray(origin.position, baseDirection.normalized);
 
-        Debug.DrawRay(origin.position, baseDirection, Color.red, 5);
+        Debug.DrawRay(origin.position, baseDirection.normalized * range, Color.red, 5);
 
         if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
         {

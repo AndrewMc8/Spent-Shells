@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -12,7 +14,7 @@ namespace StarterAssets
 #endif
 	public class FirstPersonController : MonoBehaviour
 	{
-		[Header("Player")]
+        [Header("Player")]
 		[Tooltip("Move speed of the character in m/s")]
 		public float MoveSpeed = 4.0f;
 		[Tooltip("Sprint speed of the character in m/s")]
@@ -21,7 +23,7 @@ namespace StarterAssets
 		public float RotationSpeed = 1.0f;
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
-		public Weapon weapon;
+		private Weapon weapon;
 
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
@@ -110,6 +112,19 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+
+			foreach (var g in weapons)
+				g.gameObject.SetActive(false);
+
+
+			if (weapons.Count > 0)
+            {
+				weapon = weapons[weaponIndex];
+				weapon.gameObject.SetActive(true);
+            }
+			else
+				weapon = null;
 		}
 
 		private void Update()
@@ -120,23 +135,80 @@ namespace StarterAssets
 			Move();
 		}
 
-        private void Shoot()
+		[SerializeField] List<Weapon> weapons;
+		[SerializeField] int weaponIndex = 0;
+
+		public void Drop()
         {
+			if (!weapon) return;
+
+			List<Collider> colliders = weapon.gameObject.GetComponentsInChildren<Collider>().ToList();
+			foreach (var c in colliders)
+				c.enabled = true;
+
+			weapon.gameObject.GetComponent<Rigidbody>().useGravity = true;
+			weapon.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+			weapons.Remove(weapon);
+
+			weapon.transform.parent = null;
+
+			if (weaponIndex >= weapons.Count)
+				weaponIndex--;
+
+			if (weapons.Count > 0)
+            {
+				weapon = weapons[weaponIndex];
+				weapon.gameObject.SetActive(true);
+            }
+			else
+				weapon = null;
+        }
+
+		public void ScrollUp()
+		{
+			if (weapons.Count == 0) return;
+
+			weaponIndex++;
+			if (weaponIndex >= weapons.Count)
+				weaponIndex = 0;
+
+			weapon.gameObject.SetActive(false);
+			weapon = weapons[weaponIndex];
+			weapon.gameObject.SetActive(true);
+		}
+
+		public void ScrollDown()
+		{
+			if (weapons.Count == 0) return;
+
+			weaponIndex--;
+			if (weaponIndex < 0)
+				weaponIndex = weapons.Count - 1;
+
+			weapon.gameObject.SetActive(false);
+			weapon = weapons[weaponIndex];
+			weapon.gameObject.SetActive(true);
+		}
+
+		private void Shoot()
+        {
+			if (Input.mouseScrollDelta.y > 0 || Input.GetKeyDown(KeyCode.UpArrow))
+				ScrollDown();
+			else if (Input.mouseScrollDelta.y < 0 || Input.GetKeyDown(KeyCode.DownArrow))
+				ScrollUp();
+
 			weapon?.update(Time.deltaTime);
 
             if (Input.GetKeyDown(KeyCode.R) && weapon is Gun)
-            {
 				(weapon as Gun)?.Reload();
-            }
-            if (Input.GetMouseButton(0))
-            {
-				weapon?.Pressed();
-            }
-            else
-            {
-				weapon?.Released();
-            }
 
+            if (Input.GetMouseButton(0))
+				weapon?.Pressed();
+            else
+				weapon?.Released();
+
+			if (weapon is Gun && (weapon as Gun).AmmoCount <= 0)
+				Drop();
         }
 
         private void LateUpdate()

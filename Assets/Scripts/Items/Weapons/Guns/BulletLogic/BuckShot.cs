@@ -35,9 +35,9 @@ public class BuckShot : BulletLogic
             if (i == 0)
                 deviatedDirection = Vector3.zero;
 
-            deviatedDirection = baseDirection * 10 + origin.right * deviatedDirection.x + origin.up * deviatedDirection.y;
+            deviatedDirection = (baseDirection * 10 + origin.right * deviatedDirection.x + origin.up * deviatedDirection.y).normalized;
 
-            Debug.DrawRay(origin.position, deviatedDirection, Color.red, 5);
+            Debug.DrawRay(origin.position, deviatedDirection * range, Color.red, 5);
 
             Ray ray = new Ray(origin.position, deviatedDirection);
             if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
