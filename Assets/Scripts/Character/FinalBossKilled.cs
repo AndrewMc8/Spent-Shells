@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class FinalBossKilled : TriggerEvent
 {
+    [SerializeField] protected AudioSource VictorySound;
+
     public override void Trigger()
     {
-        //  Game Over (Win)
-
-        print("win");
+        AudioSource.PlayClipAtPoint(VictorySound.clip, transform.position);
     }
 }

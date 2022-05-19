@@ -57,7 +57,6 @@ public class Enemy : Character
 
             if(attackTimer <= 0 && Vector3.Distance(transform.position, player.position) < maxAttackRange)
             {
-                print("attacked");
                 animator.SetInteger("attackMethod", Random.Range(1, attackCount));
                 animator.SetTrigger("attack");
 

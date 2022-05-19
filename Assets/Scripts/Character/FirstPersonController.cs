@@ -19,6 +19,7 @@ namespace StarterAssets
 
         public override void Die()
         {
+			print("died");
 			AudioSource.PlayClipAtPoint(gameOverLoss.clip, transform.position);
         }
 
@@ -140,6 +141,7 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			base.update(Time.deltaTime);
 
 			if (health.CurrentHealth <= 0)
             {
@@ -150,7 +152,6 @@ namespace StarterAssets
             }
 
 			health_text.text = health.CurrentHealth + " / " + health.MaxHealth;
-			base.update(Time.deltaTime);
 
 
 			if (weapon)
