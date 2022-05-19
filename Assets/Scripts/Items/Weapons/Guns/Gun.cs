@@ -171,7 +171,8 @@ public abstract class Gun : Weapon
 
             if(reloadTimer <= 0)
             {
-                if(reloadedSound) AudioSource.PlayClipAtPoint(reloadedSound.clip, transform.position);
+                if(reloadedSound)
+                    AudioSource.PlayClipAtPoint(reloadedSound.clip, transform.position);
 
                 //  max request
                 int requestedAmmo = magCapacity + ((chamberable && roundsRemaining > 0) ? 1 : 0) - roundsRemaining;
