@@ -15,9 +15,11 @@ namespace StarterAssets
 #endif
 	public class FirstPersonController : Character
 	{
+		[SerializeField] protected AudioSource gameOverLoss;
+
         public override void Die()
         {
-			print("Ha loser");
+			AudioSource.PlayClipAtPoint(gameOverLoss.clip, transform.position);
         }
 
         [Header("Player")]
@@ -138,9 +140,18 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			base.update(Time.deltaTime);
+
+			if (health.CurrentHealth <= 0)
+            {
+				health_text.text = "LOSER";
+				ammo_text.text = "\nLOSER";
+
+				return;
+            }
 
 			health_text.text = health.CurrentHealth + " / " + health.MaxHealth;
+			base.update(Time.deltaTime);
+
 
 			if (weapon)
 			{
