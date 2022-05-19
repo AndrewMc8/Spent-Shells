@@ -14,7 +14,7 @@ public abstract class Gun : Weapon
     [SerializeField] protected int extraAmmo;
 
     [HideInInspector]
-    public int AmmoCount { get { return extraAmmo + roundsRemaining; } }
+    public int AmmoCount { get { return extraAmmo; } }
 
     [Header("Base")]
     [SerializeField] protected float fireInterval = 0.2f;
@@ -46,8 +46,14 @@ public abstract class Gun : Weapon
     [SerializeField] protected AudioSource reloadedSound = null;
 
     [Header("GunParts")]
+    [SerializeField] protected Transform viewPort;
     [SerializeField] protected Transform gunPort;
     [SerializeField] protected GameObject gunBase;
+
+    [SerializeField] protected GameObject muzzle_flash;
+
+    public Transform ViewPort { get { return viewPort; } }
+    public float Range { get { return maxRange; } }
 
     public void Validate()
     {
@@ -200,13 +206,20 @@ public abstract class Gun : Weapon
                     throw new InvalidOperationException("How?");
             }
 
-            Vector3 dir = (gunPort.forward * 10 + gunPort.right * -xDev + gunPort.up * yDev).normalized;
+            Vector3 dir = (viewPort.forward * 10 + viewPort.right * -xDev + viewPort.up * yDev).normalized;
 
             if (firedSound)
                 AudioSource.PlayClipAtPoint(firedSound.clip, transform.position);
 
+            if (muzzle_flash)
+            {
+                muzzle_flash.transform.position = gunPort.transform.position;
+                muzzle_flash.transform.forward = gunPort.transform.forward;
+                muzzle_flash.GetComponent<ParticleSystem>().Play();
+            }
+
             roundsRemaining--;
-            List<GameObject> hitObjects = bulletLogic.GenerateHits(gunPort, dir, maxRange);
+            List<GameObject> hitObjects = bulletLogic.GenerateHits(viewPort, dir, maxRange);
 
             foreach(var go in hitObjects)
             {

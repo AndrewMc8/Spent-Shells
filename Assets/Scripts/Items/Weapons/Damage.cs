@@ -29,6 +29,13 @@ namespace Assets.Scripts.Items.Weapons
             this.duration = damage.duration;
         }
 
+        public Damage(DamageType type, float dmg, float dur)
+        {
+            this.damageType = type;
+            this.damage = dmg;
+            this.duration = dur;
+        }
+
         public DamageType damageType;
         public float damage;
         public float duration;

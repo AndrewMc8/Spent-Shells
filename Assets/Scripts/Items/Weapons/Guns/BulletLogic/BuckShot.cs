@@ -42,7 +42,6 @@ public class BuckShot : BulletLogic
             Ray ray = new Ray(origin.position, deviatedDirection);
             if (Physics.Raycast(ray, out RaycastHit raycastHit, range))
             {
-                print(raycastHit.collider.gameObject.name);
                 if (true || !raycastHit.collider.CompareTag(tag))
                 {
                     hitObjects.Add(raycastHit.collider.gameObject);

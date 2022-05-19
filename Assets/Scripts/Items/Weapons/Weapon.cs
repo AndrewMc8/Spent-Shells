@@ -42,7 +42,13 @@ public abstract class Weapon : Item
     {
         if (hitObject.transform.root.TryGetComponent<Health>(out Health health))
         {
-            damages.ForEach(x => health.Damage(new Damage(x), hitObject.tag.Contains("colliderMulti: ") ? float.Parse(hitObject.tag.Substring("colliderMulti: ".Length - 1)) : 1));
+            damages.ForEach(x =>
+            {
+                if (!hitObject.transform.root.GetComponent<Character>().die)
+                {
+                    health.Damage(new Damage(x), hitObject.tag.Contains("colliderMulti: ") ? float.Parse(hitObject.tag.Substring("colliderMulti: ".Length - 1)) : 1);
+                }
+            });
         }
     }
 
